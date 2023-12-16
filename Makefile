@@ -9,6 +9,19 @@ OBJ = $(SRC:.c=.o)
 
 all: st
 
+PATCHES = $(shell find patches -type f)
+PATCH_TARGETS = st.c st.h x.c config.def.h
+
+.init_patch:
+	touch .init_patch
+	touch patches/*
+$(PATCH_TARGETS): .init_patch
+
+$(PATCH_TARGETS)&: $(PATCHES)
+	git checkout -- $(PATCH_TARGETS)
+	git apply patches/st-scrollback-0.8.5.diff
+	touch $(PATCH_TARGETS)
+
 config.h:
 	cp config.def.h config.h
 
@@ -24,6 +37,8 @@ st: $(OBJ)
 	$(CC) -o $@ $(OBJ) $(STLDFLAGS)
 
 clean:
+	git checkout -- $(PATCH_TARGETS)
+	rm -f .init_patch
 	rm -f st $(OBJ) st-$(VERSION).tar.gz
 
 dist: clean
