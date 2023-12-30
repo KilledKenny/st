@@ -10,7 +10,7 @@ OBJ = $(SRC:.c=.o)
 all: st
 
 PATCHES = $(shell find patches -type f)
-PATCH_TARGETS = st.c st.h x.c config.def.h
+PATCH_TARGETS = arg.h config.def.h config.mk st.1 st.c st.h st.info win.h x.c
 
 .init_patch:
 	touch .init_patch
@@ -20,6 +20,7 @@ $(PATCH_TARGETS): .init_patch
 $(PATCH_TARGETS)&: $(PATCHES)
 	git checkout -- $(PATCH_TARGETS)
 	git apply patches/st-scrollback-0.8.5.diff
+	git apply patches/st-large-scrollback.diff
 	touch $(PATCH_TARGETS)
 
 config.h:
